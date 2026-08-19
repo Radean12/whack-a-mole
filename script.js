@@ -87,9 +87,42 @@ function playPopSound() {
   oscillator.stop(audioContext.currentTime + 0.09);
 }
 
+function playExplosionSound() {
+  audioContext ??= new AudioContext();
+  audioContext.resume();
+  const now = audioContext.currentTime;
+  const masterGain = audioContext.createGain();
+  masterGain.gain.setValueAtTime(0.75, now);
+  masterGain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+  masterGain.connect(audioContext.destination);
+
+  const boom = audioContext.createOscillator();
+  const boomGain = audioContext.createGain();
+  boom.type = "sine";
+  boom.frequency.setValueAtTime(130, now);
+  boom.frequency.exponentialRampToValueAtTime(35, now + 0.55);
+  boomGain.gain.setValueAtTime(1, now);
+  boomGain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+  boom.connect(boomGain).connect(masterGain);
+  boom.start(now);
+  boom.stop(now + 0.56);
+
+  const noiseBuffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.45, audioContext.sampleRate);
+  const noiseData = noiseBuffer.getChannelData(0);
+  for (let index = 0; index < noiseData.length; index += 1) noiseData[index] = Math.random() * 2 - 1;
+  const noise = audioContext.createBufferSource();
+  const noiseGain = audioContext.createGain();
+  noise.buffer = noiseBuffer;
+  noiseGain.gain.setValueAtTime(0.9, now);
+  noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+  noise.connect(noiseGain).connect(masterGain);
+  noise.start(now);
+}
+
 function whack(hole) {
   if (!gameRunning) return;
   if (hole.classList.contains("bomb")) {
+    playExplosionSound();
     explode();
     return;
   }
