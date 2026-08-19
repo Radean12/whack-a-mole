@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Whack A Cat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="game" aria-labelledby="game-title">
+      <section id="start-screen" class="start-screen" aria-labelledby="start-title">
+        <p class="eyebrow">THE GALACTIC CAT BATTLE</p>
+        <h2 id="start-title">Whack <span>A Cat</span></h2>
+        <p>May the claws be with you.<br />Catch the cats before time runs out!</p>
+        <button id="start-game" class="play-again">Start Game</button>
+      </section>
+      <div class="confetti confetti-left" aria-hidden="true">✦</div>
+      <div class="confetti confetti-right" aria-hidden="true">✦</div>
+      <p class="eyebrow">A PURR-FECT GAME</p>
+      <h1 id="game-title">Whack <span>A Cat</span></h1>
+      <section class="score-card" aria-label="Current score">
+        <span class="score-label">SCORE</span><strong id="score">0</strong>
+      </section>
+      <p class="timer">TIME: <strong id="time">30</strong></p>
+      <p id="status" class="status" aria-live="polite"></p>
+      <section class="board" aria-label="Whack A Cat board">
+        <div class="hole" aria-label="Hole 1" role="button" tabindex="0"></div><div class="hole" aria-label="Hole 2" role="button" tabindex="0"></div><div class="hole" aria-label="Hole 3" role="button" tabindex="0"></div>
+        <div class="hole" aria-label="Hole 4" role="button" tabindex="0"></div><div class="hole" aria-label="Hole 5" role="button" tabindex="0"></div><div class="hole" aria-label="Hole 6" role="button" tabindex="0"></div>
+        <div class="hole" aria-label="Hole 7" role="button" tabindex="0"></div><div class="hole" aria-label="Hole 8" role="button" tabindex="0"></div><div class="hole" aria-label="Hole 9" role="button" tabindex="0"></div>
+      </section>
+      <section id="game-over" class="game-over" aria-labelledby="game-over-title" hidden>
+        <p class="eyebrow">MISSION COMPLETE</p>
+        <h2 id="game-over-title">Final Score</h2>
+        <strong id="final-score">0</strong>
+        <button id="play-again" class="play-again">Play Again</button>
+      </section>
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html>
