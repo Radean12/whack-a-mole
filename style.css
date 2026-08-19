@@ -38,6 +38,8 @@ h1 span { color: #ffd447; }
 .score-card strong { font-size: 2.6rem; line-height: 1; }
 .timer { margin: -14px 0 22px; color: #ffd447; font-size: 1.15rem; font-weight: 700; letter-spacing: .1em; }
 .timer strong { color: #52d3ff; font-size: 1.5rem; }
+.combo { margin: -14px 0 18px; color: #a9c8ed; font-size: .95rem; font-weight: 700; letter-spacing: .12em; }
+.combo strong { color: #ffd447; font-size: 1.25rem; }
 .status { min-height: 1.4em; margin: -10px 0 14px; color: #52d3ff; font-size: 1.15rem; font-weight: 700; }
 .game-over { position: fixed; inset: 0; z-index: 10; display: grid; place-content: center; gap: 8px; padding: 30px; text-align: center; background: radial-gradient(circle at 50% 40%, #163c78, #030b20 70%); }
 .game-over[hidden] { display: none; }
@@ -55,6 +57,7 @@ h1 span { color: #ffd447; }
 .hole { aspect-ratio: 1; padding: 0; position: relative; border: 0; border-radius: 50%; background: radial-gradient(ellipse at center, #24152f 0 53%, #4b2b5c 55% 67%, #8b5c63 69% 77%, #c38b76 79% 100%); box-shadow: inset 0 -7px 0 rgba(27, 13, 36, .24), 0 7px 0 #24144f; cursor: pointer; overflow: hidden; }
 .hole::after { content: "🐱"; position: absolute; left: 50%; top: 50%; font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif; font-size: clamp(3.2rem, 12vw, 5.3rem); line-height: 1; opacity: 0; transform: translate(-50%, -46%) scale(.65); filter: drop-shadow(0 4px 0 rgba(50, 25, 43, .35)); transition: opacity .12s ease, transform .16s ease; }
 .hole.active::after { opacity: 1; transform: translate(-50%, -46%) scale(1); }
+.hole.golden::after { content: "😺"; filter: drop-shadow(0 0 8px #ffd447) drop-shadow(0 4px 0 rgba(50, 25, 43, .35)); }
 .hole:focus-visible { outline: 4px solid #695cf6; outline-offset: 4px; }
 .confetti { position: absolute; color: #ffd039; font-size: 2.3rem; }
 .confetti-left { top: 28px; left: 30px; transform: rotate(-15deg); }
