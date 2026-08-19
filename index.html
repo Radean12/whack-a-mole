@@ -15,6 +15,11 @@
         <p class="eyebrow">THE GALACTIC CAT BATTLE</p>
         <h2 id="start-title">Whack <span>A Cat</span></h2>
         <p>May the claws be with you.<br />Catch the cats before time runs out!</p>
+        <div class="difficulty" aria-label="Choose difficulty">
+          <button class="difficulty-button" data-difficulty="easy" aria-pressed="false">Easy</button>
+          <button class="difficulty-button selected" data-difficulty="normal" aria-pressed="true">Normal</button>
+          <button class="difficulty-button" data-difficulty="hard" aria-pressed="false">Hard</button>
+        </div>
         <button id="start-game" class="play-again">Start Game</button>
       </section>
       <div class="confetti confetti-left" aria-hidden="true">✦</div>
@@ -33,10 +38,13 @@
         <div class="hole" aria-label="Hole 7" role="button" tabindex="0"></div><div class="hole" aria-label="Hole 8" role="button" tabindex="0"></div><div class="hole" aria-label="Hole 9" role="button" tabindex="0"></div>
       </section>
       <section id="game-over" class="game-over" aria-labelledby="game-over-title" hidden>
-        <p class="eyebrow">MISSION COMPLETE</p>
+        <p id="game-over-eyebrow" class="eyebrow">MISSION COMPLETE</p>
         <h2 id="game-over-title">Final Score</h2>
         <strong id="final-score">0</strong>
-        <button id="play-again" class="play-again">Play Again</button>
+        <div class="game-over-actions">
+          <button id="play-again" class="play-again">Restart</button>
+          <button id="go-home" class="home-button">Go Home</button>
+        </div>
       </section>
     </main>
     <script src="script.js"></script>

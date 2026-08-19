@@ -6,36 +6,71 @@ const status = document.querySelector("#status");
 const gameOver = document.querySelector("#game-over");
 const finalScore = document.querySelector("#final-score");
 const playAgain = document.querySelector("#play-again");
+const goHome = document.querySelector("#go-home");
+const gameOverTitle = document.querySelector("#game-over-title");
+const gameOverEyebrow = document.querySelector("#game-over-eyebrow");
 const startScreen = document.querySelector("#start-screen");
 const startGameButton = document.querySelector("#start-game");
-const catVisibleFor = 700;
+const difficultyButtons = [...document.querySelectorAll(".difficulty-button")];
+const catVisibleFor = 574;
 let hideTimeout;
 let points = 0;
 let timeLeft = 30;
 let gameRunning = true;
 let catInterval;
 let countdownInterval;
+let difficulty = "normal";
+const difficultySpeed = { easy: 1.2, normal: 1, hard: 0.8 };
 let spawnTimeout;
-let successfulHits = 0;
+let bombInterval;
 let streak = 0;
 let nextCatIsGolden = false;
 let audioContext;
 
-function showCat() {
+function showCat(isSilver = false, numberOfCats = 1) {
   if (!gameRunning) return;
   window.clearTimeout(hideTimeout);
+  window.clearTimeout(spawnTimeout);
   holes.forEach((hole) => hole.classList.remove("active", "golden"));
-  const randomHole = holes[Math.floor(Math.random() * holes.length)];
-  randomHole.classList.add("active");
-  if (nextCatIsGolden) {
-    randomHole.classList.add("golden");
+  const randomHoles = [...holes].sort(() => Math.random() - 0.5).slice(0, numberOfCats);
+  randomHoles.forEach((hole) => hole.classList.add("active"));
+  if (isSilver || nextCatIsGolden) {
+    randomHoles[0].classList.add("golden");
     nextCatIsGolden = false;
   }
 
+  const visibleTime = (randomHoles.some((hole) => hole.classList.contains("golden")) ? 679 : catVisibleFor) * difficultySpeed[difficulty];
   hideTimeout = window.setTimeout(() => {
-    randomHole.classList.remove("active");
-  }, catVisibleFor);
-  spawnTimeout = window.setTimeout(showCat, 1000);
+    randomHoles.forEach((hole) => hole.classList.remove("active", "golden"));
+  }, visibleTime);
+  spawnTimeout = window.setTimeout(() => showCat(), 784 * difficultySpeed[difficulty]);
+}
+
+function showBomb() {
+  if (!gameRunning) return;
+  const availableHoles = holes.filter((hole) => !hole.classList.contains("active"));
+  const bombHole = (availableHoles.length ? availableHoles : holes)[Math.floor(Math.random() * (availableHoles.length || holes.length))];
+  holes.forEach((hole) => hole.classList.remove("bomb"));
+  bombHole.classList.add("bomb");
+}
+
+function explode() {
+  if (!gameRunning) return;
+  stopGameTimers();
+  gameRunning = false;
+  holes.forEach((hole) => hole.classList.remove("active", "golden", "bomb"));
+  gameOverEyebrow.textContent = "GAME OVER";
+  gameOverTitle.textContent = "You Exploded!";
+  finalScore.textContent = points;
+  gameOver.classList.add("exploded");
+  gameOver.hidden = false;
+}
+
+function stopGameTimers() {
+  window.clearInterval(countdownInterval);
+  window.clearInterval(bombInterval);
+  window.clearTimeout(hideTimeout);
+  window.clearTimeout(spawnTimeout);
 }
 
 function playPopSound() {
@@ -54,22 +89,31 @@ function playPopSound() {
 
 function whack(hole) {
   if (!gameRunning) return;
+  if (hole.classList.contains("bomb")) {
+    explode();
+    return;
+  }
   if (!hole.classList.contains("active")) {
     streak = 0;
     combo.textContent = 0;
     return;
   }
   playPopSound();
-  successfulHits += 1;
   streak += 1;
   const isGolden = hole.classList.contains("golden");
-  points += isGolden ? 5 : streak === 3 ? 4 : 1;
+  const pointsAwarded = isGolden ? 5 : streak === 3 ? 4 : 1;
+  points += pointsAwarded;
   combo.textContent = streak;
-  if (successfulHits % 3 === 0) nextCatIsGolden = true;
   score.textContent = points;
-  hole.classList.remove("active");
-  hole.classList.remove("golden");
+  hole.dataset.points = `+${pointsAwarded}`;
+  hole.classList.remove("hit");
+  void hole.offsetWidth;
+  hole.classList.add("hit", "smushed");
   window.clearTimeout(hideTimeout);
+  window.setTimeout(() => {
+    hole.classList.remove("active", "smushed", "golden");
+  }, 220);
+  window.setTimeout(() => hole.classList.remove("hit"), 500);
 }
 
 holes.forEach((hole) => {
@@ -85,33 +129,50 @@ holes.forEach((hole) => {
 function startGame() {
   timeLeft = 30;
   points = 0;
-  successfulHits = 0;
   streak = 0;
   combo.textContent = 0;
   nextCatIsGolden = false;
   gameRunning = true;
+  gameOver.classList.remove("exploded");
+  gameOverEyebrow.textContent = "MISSION COMPLETE";
+  gameOverTitle.textContent = "Final Score";
   time.textContent = timeLeft;
   score.textContent = points;
   status.textContent = "";
   startScreen.hidden = true;
   gameOver.hidden = true;
   showCat();
-  showCat();
+  bombInterval = window.setInterval(showBomb, 3000);
   countdownInterval = window.setInterval(() => {
   timeLeft -= 1;
   time.textContent = timeLeft;
   if (timeLeft === 0) {
     gameRunning = false;
-    window.clearInterval(catInterval);
-    window.clearInterval(countdownInterval);
-    window.clearTimeout(hideTimeout);
-    window.clearTimeout(spawnTimeout);
+    stopGameTimers();
     holes.forEach((hole) => hole.classList.remove("active"));
     finalScore.textContent = points;
     gameOver.hidden = false;
   }
+  if (timeLeft > 0 && timeLeft % 5 === 0) showCat(timeLeft % 10 === 0, 2);
   }, 1000);
 }
 
 playAgain.addEventListener("click", startGame);
+goHome.addEventListener("click", () => {
+  stopGameTimers();
+  gameRunning = false;
+  gameOver.hidden = true;
+  startScreen.hidden = false;
+  holes.forEach((hole) => hole.classList.remove("active", "golden", "bomb"));
+});
 startGameButton.addEventListener("click", startGame);
+difficultyButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    difficulty = button.dataset.difficulty;
+    difficultyButtons.forEach((option) => {
+      const selected = option === button;
+      option.classList.toggle("selected", selected);
+      option.setAttribute("aria-pressed", selected);
+    });
+  });
+});
